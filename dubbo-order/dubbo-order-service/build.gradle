@@ -1,0 +1,4 @@
+dependencies {
+    implementation 'cn.czy:dubbo-order-api:1.0.0'
+    implementation 'cn.czy:dubbo-goods-api:1.0.0'
+}

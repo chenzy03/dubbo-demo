@@ -1,0 +1,66 @@
+// buildscript中声明的资源是gradle本身所需要使用到的
+buildscript {
+    repositories {
+        mavenLocal()
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    }
+}
+
+// 声明插件
+plugins {
+    id 'org.springframework.boot' version '2.4.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+// 自定义全局变量
+ext {
+    fastJsonVersion = '1.2.75'
+    lombokVersion = '1.18.18'
+}
+
+// 作用于root project以及所有sub project
+allprojects {
+    group = 'cn.czy'
+    version = '0.0.1-SNAPSHOT'
+    // jdk版本
+    sourceCompatibility = '1.8'
+
+    // 配置仓库地址，多仓库按顺序从上到下搜索
+    repositories {
+        mavenLocal()
+        maven{ url 'http://maven.aliyun.com/nexus/content/groups/public/'}
+    }
+}
+
+// 作用于所有的sub project, 不作用于root project
+subprojects {
+    // 这个必须要加，要不然dependencies会报错
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    // 上传jar包到本地仓库
+    uploadArchives {
+        repositories {
+            mavenLocal()
+        }
+    }
+
+    // 声明依赖
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        implementation group: 'org.apache.dubbo', name: 'dubbo-spring-boot-starter', version: '2.7.8'
+        implementation (group: 'org.apache.curator', name: 'curator-framework', version: '2.10.0')
+        implementation group: 'org.apache.curator', name: 'curator-recipes', version: '2.10.0'
+        implementation group: 'com.alibaba', name: 'fastjson', version: fastJsonVersion
+        compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    }
+}
+
+
+
+test {
+    useJUnitPlatform()
+}
